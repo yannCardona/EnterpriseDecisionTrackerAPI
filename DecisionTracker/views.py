@@ -20,7 +20,10 @@ class DecisionPagination(PageNumberPagination):
 	summary="List and create decisions",
 	description=(
 		"This endpoint allows users to list all decisions or create a new decision. "
-		"Users need to be authenticated to create a decision, but listing decisions is available to all users."
+		"Users need to be authenticated to create a decision, but listing decisions is available to all users. "
+		"Per default only one decision is shown per page, but this can be changed with the page_size parameter (max=10). "
+		"If a decisions has one or more evaluations, they are also listed. "
+		"The decisions can be filtered by title, measurable_goal or status. "
 	),
 	tags=["decisions"],
 	request=DecisionSerializer,
@@ -58,6 +61,7 @@ class DecisionPagination(PageNumberPagination):
 				}
 			}
 		),
+		400: OpenApiResponse(description='Bad Request'),
 		401: OpenApiResponse(description='Unauthorized'),
 	}
 )
@@ -73,7 +77,7 @@ class DecisionListCreate(generics.ListCreateAPIView):
 	summary="Retrieve, update, or delete a decision",
 	description=(
 		"This endpoint allows users to retrieve, update, or delete a specific decision by its ID. "
-		"Users need to be authenticated to update or delete a decision, while retrieving a decision is available to all users."
+		"Users need to be authenticated to update or delete a decision, while retrieving a decision is available to all users. "
 	),
 	tags=["decisions/:id"],
 	request=DecisionSerializer,
@@ -104,8 +108,9 @@ class DecisionRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 @extend_schema(
 	description=(
-		"This endpoint allows users to evaluate a decision. Only decisions with the status 'Completed' can be evaluated."
-		"Only Users from the 'Admin' Group can evaluate decisions."
+		"This endpoint allows users to evaluate a decision. Only decisions with the status 'Completed' can be evaluated. "
+		"Only Users from the 'Admin' Group can evaluate decisions. "
+		"One decision can have multiple evaluations, that's why I added the fields user and date, to see who and when an evaluation was made."
 	),
 	summary="Evaluate a decision",
 	tags=["evaluate"],
@@ -129,13 +134,13 @@ class DecisionRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 	}
 )
 @api_view(['POST']) #only handle post requests
-@permission_classes([IsAuthenticated, IsAdminGroupUser]) 
+@permission_classes([IsAuthenticated, IsAdminGroupUser]) #custom permission to check if User belongs to Admin Group
 def evaluate_decision(request, pk):
 
 	decision = get_object_or_404(Decision, pk=pk)
 
 	if decision.status != 'Completed':
-		return Response({'detail': 'Evaluation only allowed for completed decisions'}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': 'Evaluation only allowed for Completed decisions'}, status=status.HTTP_400_BAD_REQUEST)
 
 	serializer = EvaluationSerializer(data=request.data)
 	

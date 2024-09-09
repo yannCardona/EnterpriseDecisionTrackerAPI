@@ -101,9 +101,9 @@ WSGI_APPLICATION = 'EnterpriseDecisionTrackerAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABSE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': os.environ.get('POSTGRES_HOST'),
         'PORT': 5432,
     }
@@ -133,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
