@@ -9,6 +9,8 @@
 
 ## Setup
 1. Clone the repository:
+	git clone https://github.com/yannCardona/EnterpriseDecisionTrackerAPI.git
+	cd EnterpriseDecisionTrackerAPI
 
 2. Create Database and User in postgreSQL:
 	psql -U 'your postgres login'
