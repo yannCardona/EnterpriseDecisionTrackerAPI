@@ -53,5 +53,5 @@
 3. For authentication generate a token with a post request to /api/token/ using one of the following Users
 	- the User 'admin' (pswd: 'admin'), belongs to the 'Admin' Group and can access all API endpoints
 	- the User 'user' (pswd: 'u1s2e3r') can't evaluate decisions
-4. copy the access token, click the 'Authorize' Button on the upper right and paste it in the value field
+4. copy the access token, click the 'Authorize' Button on the upper right and paste it in the value field (the token will be added automatically to the header of the requests)
 5. you should now be able to access all API endpoints
