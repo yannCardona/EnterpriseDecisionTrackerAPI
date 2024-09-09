@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate Decision {{ decision.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Login to Get JWT Token</h2>
+<form id="loginForm">
+    <label for="loginUsername">Username:</label><br>
+    <input type="text" id="loginUsername" name="username" required><br><br>
+    
+    <label for="loginPassword">Password:</label><br>
+    <input type="password" id="loginPassword" name="password" required><br><br>
+    
+    <button type="button" onclick="getToken()">Get Token</button>
+</form>
+
+<p id="tokenOutput"></p>
+
+<h2>Evaluate Decision ID: {{ decision.id }}</h2>
+<form id="evaluateForm">
+    <label for="decisionId">Decision ID:</label><br>
+    <input type="number" id="decisionId" name="decision_id" value="{{ decision.id }}" readonly><br><br>
+    
+    <label for="goalMet">Goal Met:</label><br>
+    <select id="goalMet" name="goal_met">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+    </select><br><br>
+    
+    <label for="comments">Comments:</label><br>
+    <textarea id="comments" name="comments" rows="4" cols="50"></textarea><br><br>
+    
+    <button type="button" onclick="evaluateDecision()">Evaluate Decision (With Token)</button>
+    <button type="button" onclick="evaluateDecisionWithoutToken()">Evaluate Decision (Without Token)</button>
+</form>
+
+<p id="evaluateOutput"></p>
+
+<script>
+    let jwtToken = '';
+
+    // Function to get JWT token
+    function getToken() {
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        fetch('http://127.0.0.1:8000/api/token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.access) {
+                jwtToken = data.access; // Store the token
+                document.getElementById('tokenOutput').textContent = 'JWT Token: ' + jwtToken;
+            } else {
+                document.getElementById('tokenOutput').textContent = 'Error: ' + JSON.stringify(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Function to evaluate a decision with token
+    function evaluateDecision() {
+        const decisionId = document.getElementById('decisionId').value;
+        const goalMet = document.getElementById('goalMet').value;
+        const comments = document.getElementById('comments').value;
+
+        if (!jwtToken) {
+            alert('No JWT token available. Please get a token first.');
+            return;
+        }
+
+        fetch(`http://127.0.0.1:8000/decisions/${decisionId}/evaluate/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + jwtToken
+            },
+            body: JSON.stringify({
+                goal_met: goalMet === 'true',
+                comments: comments
+            })
+        })
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            statusText: response.statusText,
+            data: data
+        })))
+        .then(response => {
+            document.getElementById('evaluateOutput').innerHTML = `
+                Status Code: ${response.status} <br>
+                Status Text: ${response.statusText} <br>
+                Response: ${JSON.stringify(response.data)}
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('evaluateOutput').innerHTML = `
+                Status Code: ${error.response ? error.response.status : 'N/A'} <br>
+                Status Text: ${error.response ? error.response.statusText : 'N/A'} <br>
+                Error: ${error.message}
+            `;
+        });
+    }
+
+    // Function to evaluate a decision without token
+    function evaluateDecisionWithoutToken() {
+        const decisionId = document.getElementById('decisionId').value;
+        const goalMet = document.getElementById('goalMet').value;
+        const comments = document.getElementById('comments').value;
+
+        fetch(`http://127.0.0.1:8000/decisions/${decisionId}/evaluate/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                goal_met: goalMet === 'true',
+                comments: comments
+            })
+        })
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            statusText: response.statusText,
+            data: data
+        })))
+        .then(response => {
+            document.getElementById('evaluateOutput').innerHTML = `
+                Status Code: ${response.status} <br>
+                Status Text: ${response.statusText} <br>
+                Response: ${JSON.stringify(response.data)}
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('evaluateOutput').innerHTML = `
+                Status Code: ${error.response ? error.response.status : 'N/A'} <br>
+                Status Text: ${error.response ? error.response.statusText : 'N/A'} <br>
+                Error: ${error.message}
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>
