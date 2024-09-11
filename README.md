@@ -1,3 +1,6 @@
+# Project Description 
+This is a RESTful API that allows users to manage enterprise decisions. Each decision should include a title, description, a measurable goal, and a status indicator. Users should be able to create, retrieve, update, and delete decisions, as well as evaluate completed decisions.
+
 # Project Setup
 
 ## Prerequisites
