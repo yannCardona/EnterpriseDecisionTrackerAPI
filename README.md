@@ -1,7 +1,7 @@
 # Project Description 
 This is a RESTful API using Django Rest, that allows users to manage enterprise decisions. Each decision should include a title, a description, a measurable goal, and a status indicator. All fields are required upon creation except of the status, which is set to "pending" by default. Users can create, retrieve, update and delete decisions, as well as evaluate completed decisions. For documentation I used drf-spectacular and for a simple visualization and interaction with the API I set up SwaggerUI.
 
-As Bonuses I implemented pagination and query filtering for the decisions list, tokens authentication (only GET api endpoints are accessible without authentication) and different user roles (only users belonging to the "Admin" group can evaluate decisions).
+As Bonuses I implemented pagination and query filtering for the decisions list, token authentication (only GET api endpoints are accessible without authentication) and different user roles (only users belonging to the "Admin" group can evaluate decisions).
 
 
 # Project Setup
