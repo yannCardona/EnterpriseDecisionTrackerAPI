@@ -76,7 +76,7 @@ class DecisionListCreate(generics.ListCreateAPIView):
 @extend_schema(
 	summary="Retrieve, update, or delete a decision",
 	description=(
-		"This endpoint allows users to retrieve, update, or delete a specific decision by its ID. "
+		"This endpoint allows users to retrieve, update, or delete a specific decision by its ID. Use patch for partial updates (not all fields will be required). "
 		"Users need to be authenticated to update or delete a decision, while retrieving a decision is available to all users. "
 	),
 	tags=["decisions/:id"],
@@ -104,7 +104,7 @@ class DecisionRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Decision.objects.all()
 	serializer_class = DecisionSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-	http_method_names = ['get', 'put', 'delete']
+	http_method_names = ['get', 'put', 'patch', 'delete']
 
 @extend_schema(
 	description=(
@@ -139,7 +139,7 @@ def evaluate_decision(request, pk):
 
 	decision = get_object_or_404(Decision, pk=pk)
 
-	if decision.status != 'Completed':
+	if decision.status.lower() != 'completed':
 		return Response({'detail': 'Evaluation only allowed for Completed decisions'}, status=status.HTTP_400_BAD_REQUEST)
 
 	serializer = EvaluationSerializer(data=request.data)
