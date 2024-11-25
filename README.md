@@ -1,5 +1,8 @@
 # Project Description 
-This is a RESTful API that allows users to manage enterprise decisions. Each decision should include a title, description, a measurable goal, and a status indicator. Users should be able to create, retrieve, update, and delete decisions, as well as evaluate completed decisions. For documentation I used drf-spectacular and for a simple visualization and interaction with the API I set up SwaggerUI.
+This is a RESTful API using Django Rest, that allows users to manage enterprise decisions. Each decision should include a title, a description, a measurable goal, and a status indicator. All fields are required upon creation except of the status, which is set to "pending" by default. Users can create, retrieve, update, and delete decisions, as well as evaluate completed decisions. For documentation I used drf-spectacular and for a simple visualization and interaction with the API I set up SwaggerUI.
+
+As Bonuses I implemented pagination and query filtering for the decisions list, tokens authentication (api endpoints are only accessible after authentication) and different user roles (only users belonging to the "Admin" group can evaluate decisions).
+
 
 # Project Setup
 
@@ -52,9 +55,9 @@ This is a RESTful API that allows users to manage enterprise decisions. Each dec
 ## Use
 
 1. go to http://127.0.0.1:8000/api/docs/ to access the documentation
-2. without authentication only the GET API endpoints are accessible 
+2. without authentication no API endpoints are accessible
 3. For authentication generate a token with a post request to /api/token/ using one of the following Users
 	- the User 'admin' (pswd: 'admin'), belongs to the 'Admin' Group and can access all API endpoints
 	- the User 'user' (pswd: 'u1s2e3r') can't evaluate decisions
-4. copy the access token, click the 'Authorize' Button on the upper right and paste it in the value field (the token will be added automatically to the header of the requests)
-5. you should now be able to access all API endpoints
+4. copy the access token (without " "), click the 'Authorize' Button on the upper right and paste it in the value field (the token will be added automatically to the header of the requests)
+5. you should now be able to access and test all API endpoints
